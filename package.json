@@ -1,0 +1,16 @@
+{
+  "name": "log-file-linter",
+  "version": "0.1.0",
+  "description": "Lints log files for junk that trips up downstream tooling, reporting findings with line numbers.",
+  "license": "MIT",
+  "bin": {
+    "loglint": "dist/cli.js"
+  },
+  "main": "dist/cli.js",
+  "scripts": {
+    "build": "tsc"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
