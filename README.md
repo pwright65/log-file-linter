@@ -51,6 +51,25 @@ blocks waiting for it, same as `cat`.
 Rules are plain objects with a `check(line)` function (see `src/rules.ts`);
 there's no plugin system yet, just a list you can edit.
 
+## Configuration
+
+Drop a `.loglintrc` (JSON) in the directory you run `loglint` from to turn
+rules off or change the line length limit:
+
+```json
+{
+  "maxLineLength": 500,
+  "rules": {
+    "tab-character": false
+  }
+}
+```
+
+`rules` only needs entries for what you're changing - anything left out
+stays enabled. An unknown rule name or a malformed file is an error, not a
+silent no-op. With no `.loglintrc` present, all four rules run with the
+4000-character default.
+
 ## Building
 
 ```
@@ -63,5 +82,5 @@ build` just invokes `tsc`.
 
 ## Status
 
-Early. The rule set is small and there's no config file yet - see the
-in-progress notes in the repo for what's next.
+Early. The rule set is small. See the in-progress notes in the repo for
+what's next.

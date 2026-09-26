@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 import * as fs from "node:fs";
 import { lint } from "./linter";
-import { Finding, defaultRules } from "./rules";
+import { Finding, Rule } from "./rules";
+import { loadConfig, resolveRules } from "./config";
 
 function readStdin(): string {
   // fd 0 is stdin; readFileSync blocks until EOF, which is fine for a
@@ -14,10 +15,10 @@ function formatFinding(f: Finding): string {
   return `  ${location}  ${f.severity}  ${f.message}  (${f.ruleId})`;
 }
 
-function lintTarget(target: string): { findings: Finding[]; error?: string } {
+function lintTarget(target: string, rules: Rule[]): { findings: Finding[]; error?: string } {
   try {
     const text = target === "-" ? readStdin() : fs.readFileSync(target, "utf8");
-    return { findings: lint(text, defaultRules) };
+    return { findings: lint(text, rules) };
   } catch (err) {
     return { findings: [], error: (err as Error).message };
   }
@@ -28,9 +29,17 @@ function main(): number {
   const targets = args.length > 0 ? args : ["-"];
   let hasError = false;
 
+  let rules: Rule[];
+  try {
+    rules = resolveRules(loadConfig());
+  } catch (err) {
+    console.error((err as Error).message);
+    return 1;
+  }
+
   for (const target of targets) {
     const label = target === "-" ? "<stdin>" : target;
-    const { findings, error } = lintTarget(target);
+    const { findings, error } = lintTarget(target, rules);
 
     if (error) {
       console.error(`${label}: ${error}`);
